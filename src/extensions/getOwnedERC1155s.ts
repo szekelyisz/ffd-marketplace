@@ -17,7 +17,7 @@ export type GetERC1155sParams = {
   /**
    * The address of the wallet to get the NFTs of.
    */
-  owner: string;
+  owner: `0x${string}`;
 
   requestPerSec?: number;
 };
@@ -67,7 +67,7 @@ export async function getOwnedERC1155s(
     }
     throw Error("Contract doesn't have required extension");
   });
-  const owners: string[] = [];
+  const owners: `0x${string}`[] = [];
   const tokenIds: bigint[] = [];
   for (let i = 0n; i < maxId; i++) {
     owners.push(owner);

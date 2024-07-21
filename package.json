@@ -1,5 +1,5 @@
 {
-  "name": "marketplace-template",
+  "name": "@fairfooddata/marketplace",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -22,13 +22,17 @@
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
+    "swr": "^2.2.5",
     "thirdweb": "^5.28.0"
   },
   "devDependencies": {
+    "@fairfooddata/types": "^0.0.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "pino-pretty": "^11.2.1",
     "postcss": "^8",
-    "typescript": "^5"
+    "typescript": "^5.5.2"
   }
 }

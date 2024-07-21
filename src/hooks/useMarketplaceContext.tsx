@@ -1,9 +1,7 @@
 "use client";
 
+import { theChain } from "@/consts/chains";
 import { client } from "@/consts/client";
-import { MARKETPLACE_CONTRACTS } from "@/consts/marketplace_contract";
-import { NFT_CONTRACTS } from "@/consts/nft_contracts";
-import { SUPPORTED_TOKENS, Token } from "@/consts/supported_tokens";
 import {
   getSupplyInfo,
   SupplyInfo,
@@ -47,7 +45,7 @@ type TMarketplaceContext = {
   isRefetchingAllListings: boolean;
   listingsInSelectedCollection: DirectListing[];
   supplyInfo: SupplyInfo | undefined;
-  supportedTokens: Token[];
+  // supportedTokens: Token[];
 };
 
 const MarketplaceContext = createContext<TMarketplaceContext | undefined>(
@@ -55,59 +53,58 @@ const MarketplaceContext = createContext<TMarketplaceContext | undefined>(
 );
 
 export default function MarketplaceProvider({
-  chainId,
-  contractAddress,
   children,
 }: {
-  chainId: string;
-  contractAddress: string;
   children: ReactNode;
 }) {
-  let _chainId: number;
-  try {
-    _chainId = Number.parseInt(chainId);
-  } catch (err) {
-    throw new Error("Invalid chain ID");
-  }
-  const marketplaceContract = MARKETPLACE_CONTRACTS.find(
-    (item) => item.chain.id === _chainId
-  );
-  if (!marketplaceContract) {
-    throw new Error("Marketplace not supported on this chain");
-  }
-
-  const collectionSupported = NFT_CONTRACTS.find(
-    (item) =>
-      item.address.toLowerCase() === contractAddress.toLowerCase() &&
-      item.chain.id === _chainId
-  );
-  // You can remove this condition if you want to supported _any_ nft collection
-  // or you can update the entries in `NFT_CONTRACTS`
-  // if (!collectionSupported) {
-  //   throw new Error("Contract not supported on this marketplace");
+  // let _chainId: number;
+  // try {
+  //   _chainId = Number.parseInt(chainId);
+  // } catch (err) {
+  //   throw new Error("Invalid chain ID");
+  // }
+  // const marketplaceContract = MARKETPLACE_CONTRACTS.find(
+  //   (item) => item.chain.id === _chainId
+  // );
+  // if (!marketplaceContract) {
+  //   throw new Error("Marketplace not supported on this chain");
   // }
 
-  const contract = getContract({
-    chain: marketplaceContract.chain,
+  // const collectionSupported = NFT_CONTRACTS.find(
+  //   (item) =>
+  //     item.address.toLowerCase() === contractAddress.toLowerCase() &&
+  //     item.chain.id === _chainId
+  // );
+  // // You can remove this condition if you want to supported _any_ nft collection
+  // // or you can update the entries in `NFT_CONTRACTS`
+  // // if (!collectionSupported) {
+  // //   throw new Error("Contract not supported on this marketplace");
+  // // }
+
+  const nftContract = getContract({
+    chain: theChain,
     client,
-    address: contractAddress,
+    address: process.env.NEXT_PUBLIC_NFT_CONTRACT as string,
   });
 
   const marketplace = getContract({
-    address: marketplaceContract.address,
-    chain: marketplaceContract.chain,
+    address: process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT as string,
+    chain: theChain,
     client,
   });
 
   const { data: is721, isLoading: isChecking721 } = useReadContract(isERC721, {
-    contract,
-    queryOptions: {
-      enabled: !!marketplaceContract,
-    },
+    contract: nftContract,
+    // queryOptions: {
+    //   enabled: !!marketplaceContract,
+    // },
   });
   const { data: is1155, isLoading: isChecking1155 } = useReadContract(
     isERC1155,
-    { contract, queryOptions: { enabled: !!marketplaceContract } }
+    {
+      contract: nftContract,
+      // queryOptions: { enabled: !!marketplaceContract }
+    }
   );
 
   const isNftCollection = is1155 || is721;
@@ -117,7 +114,7 @@ export default function MarketplaceProvider({
 
   const { data: contractMetadata, isLoading: isLoadingContractMetadata } =
     useReadContract(getContractMetadata, {
-      contract,
+      contract: nftContract,
       queryOptions: {
         enabled: isNftCollection,
       },
@@ -139,7 +136,7 @@ export default function MarketplaceProvider({
     ? allValidListings.filter(
         (item) =>
           item.assetContractAddress.toLowerCase() ===
-          contract.address.toLowerCase()
+          nftContract.address.toLowerCase()
       )
     : [];
 
@@ -154,7 +151,7 @@ export default function MarketplaceProvider({
   const { data: supplyInfo, isLoading: isLoadingSupplyInfo } = useReadContract(
     getSupplyInfo,
     {
-      contract,
+      contract: nftContract,
     }
   );
 
@@ -166,16 +163,16 @@ export default function MarketplaceProvider({
     isLoadingValidListings ||
     isLoadingSupplyInfo;
 
-  const supportedTokens: Token[] =
-    SUPPORTED_TOKENS.find(
-      (item) => item.chain.id === marketplaceContract.chain.id
-    )?.tokens || [];
+  // const supportedTokens: Token[] =
+  //   SUPPORTED_TOKENS.find(
+  //     (item) => item.chain.id === theChain.id
+  //   )?.tokens || [];
 
   return (
     <MarketplaceContext.Provider
       value={{
         marketplaceContract: marketplace,
-        nftContract: contract,
+        nftContract: nftContract,
         isLoading,
         type: is1155 ? "ERC1155" : "ERC721",
         allValidListings,
@@ -185,7 +182,7 @@ export default function MarketplaceProvider({
         isRefetchingAllListings,
         listingsInSelectedCollection,
         supplyInfo,
-        supportedTokens,
+        // supportedTokens,
       }}
     >
       {children}

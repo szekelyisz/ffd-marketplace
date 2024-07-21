@@ -1,6 +1,5 @@
 "use client";
 
-import { client } from "@/consts/client";
 import { useGetENSAvatar } from "@/hooks/useGetENSAvatar";
 import { useGetENSName } from "@/hooks/useGetENSName";
 import { Link } from "@chakra-ui/next-js";
@@ -21,18 +20,16 @@ import { FaRegMoon } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { IoSunny } from "react-icons/io5";
 import {
-  ConnectButton,
   useActiveAccount,
   useActiveWallet,
   useDisconnect,
 } from "thirdweb/react";
 import type { Wallet } from "thirdweb/wallets";
-import { SideMenu } from "./SideMenu";
+import { ConnectButton } from "./ConnectButton";
 
 export function Navbar() {
   const account = useActiveAccount();
   const wallet = useActiveWallet();
-  const { colorMode } = useColorMode();
   return (
     <Box py="30px" px={{ base: "20px", lg: "50px" }}>
       <Flex direction="row" justifyContent="space-between">
@@ -45,8 +42,7 @@ export function Navbar() {
             bgClip="text"
             fontWeight="extrabold"
           >
-            {/* Replace this with your own branding */}
-            THIRDMART
+            Fair Food Data Marketplace
           </Heading>
         </Box>
         <Box display={{ lg: "block", base: "none" }}>
@@ -54,14 +50,9 @@ export function Navbar() {
           {account && wallet ? (
             <ProfileButton address={account.address} wallet={wallet} />
           ) : (
-            <ConnectButton
-              client={client}
-              theme={colorMode}
-              connectButton={{ style: { height: "56px" } }}
-            />
+            <ConnectButton />
           )}
         </Box>
-        <SideMenu />
       </Flex>
     </Box>
   );
@@ -71,13 +62,13 @@ function ProfileButton({
   address,
   wallet,
 }: {
-  address: string;
+  address: `0x${string}`;
   wallet: Wallet;
 }) {
   const { disconnect } = useDisconnect();
   const { data: ensName } = useGetENSName({ address });
   const { data: ensAvatar } = useGetENSAvatar({ ensName });
-  const { colorMode } = useColorMode();
+
   return (
     <Menu>
       <MenuButton as={Button} height="56px">
@@ -95,7 +86,7 @@ function ProfileButton({
       <MenuList>
         <MenuItem display="flex">
           <Box mx="auto">
-            <ConnectButton client={client} theme={colorMode} />
+            <ConnectButton />
           </Box>
         </MenuItem>
         <MenuItem as={Link} href="/profile" _hover={{ textDecoration: "none" }}>

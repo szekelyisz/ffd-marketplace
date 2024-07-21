@@ -3,7 +3,11 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { resolveName } from "thirdweb/extensions/ens";
 
 // Get ENS name from a wallet address
-export function useGetENSName({ address }: { address: string | undefined }) {
+export function useGetENSName({
+  address,
+}: {
+  address: `0x${string}` | undefined;
+}) {
   return useQuery(
     queryOptions({
       queryKey: ["ensName", address || "0x0"] as const,
