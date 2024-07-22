@@ -26,6 +26,7 @@ import {
 } from "thirdweb/react";
 import type { Wallet } from "thirdweb/wallets";
 import { ConnectButton } from "./ConnectButton";
+import { SideMenu } from "./SideMenu";
 
 export function Navbar() {
   const account = useActiveAccount();
@@ -53,6 +54,7 @@ export function Navbar() {
             <ConnectButton />
           )}
         </Box>
+        <SideMenu />
       </Flex>
     </Box>
   );
