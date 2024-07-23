@@ -26,7 +26,7 @@
     "thirdweb": "^5.28.0"
   },
   "devDependencies": {
-    "@fairfooddata/types": "^0.0.4",
+    "@fairfooddata/types": "0.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
