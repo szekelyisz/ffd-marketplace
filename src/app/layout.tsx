@@ -14,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body style={{ paddingBottom: "100px" }} suppressHydrationWarning={true}>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body style={{ paddingBottom: "100px" }}>
         <Providers>
           <MarketplaceProvider>
             <Navbar />
