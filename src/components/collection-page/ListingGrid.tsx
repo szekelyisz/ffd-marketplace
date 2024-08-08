@@ -19,15 +19,15 @@ export function ListingGrid() {
     xl: Math.min(len, 5),
   });
 
-  if (!listingsInSelectedCollection || !len) return <></>;
-
   return validDomain === false ? (
     <Center>Please don't use disposable email domains with our service.</Center>
-  ) : (
+  ) : listingsInSelectedCollection.length > 0 ? (
     <SimpleGrid columns={columns} spacing={4} p={4} mx="auto" mt="20px">
       {listingsInSelectedCollection.map((item) => (
         <NftCard item={item} key={item.id} />
       ))}
     </SimpleGrid>
+  ) : (
+    <Center>No NFTs listed for sale</Center>
   );
 }
