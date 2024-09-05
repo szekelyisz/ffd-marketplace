@@ -1009,10 +1009,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.3.1.tgz#d0fce5d07b0620caa282b5131c297bb60f9d87e6"
   integrity sha512-EsBwpc7hBUJWAsNPBmJy4hxWx12v6bshQsldrVmjxJoc3isbxhOrF2IcCpaXxfvq03NwkI7sbsOLXbYuqF/8Ww==
 
-"@fairfooddata/types@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@fairfooddata/types/-/types-0.0.4.tgz#b86cbe17418f4957928cd2166928b379fcdf2ac7"
-  integrity sha512-7/phL2nvb339qX1mTk3LCg/sOUVPOv2W8s7NOngTrJ0WiPKfiQqCjdTAaWZwf1HVB+NcG2bFuqI6K+6XfTA8vQ==
+"@fairfooddata/types@0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@fairfooddata/types/-/types-0.0.6.tgz#983c5cad0c4608a7ca40e61d44b3ec37b45c2f63"
+  integrity sha512-+PtCDmz0/K8a4o0bhK60r69tThOYIg7x9WlV8x2fog3HRdEfaT4Kz7w5ZtTmqpMmbfTLG4nKQECHpsyYFYAs5Q==
 
 "@floating-ui/core@^1.0.0":
   version "1.6.2"
