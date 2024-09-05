@@ -46,7 +46,7 @@ export function NftCard({ item }: { item: DirectListing }): ReactNode {
             <Flex direction="row" align={"center"}>
               <Heading size="md">
                 <Link
-                  href={`${process.env.NEXT_PUBLIC_PACKAGING_URL}/?tokenId=${item.id}`}
+                  href={`${process.env.NEXT_PUBLIC_PACKAGING_URL}/?tokenId=${item.tokenId}`}
                 >
                   {nftMetadata?.content.instance.type ?? "Unknown item"}{" "}
                   <ExternalLinkIcon mx="2px" boxSize={4} />
