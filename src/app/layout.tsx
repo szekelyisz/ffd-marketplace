@@ -4,7 +4,7 @@ import { Navbar } from "@/components/shared/Navbar";
 import MarketplaceProvider from "@/hooks/useMarketplaceContext";
 
 export const metadata: Metadata = {
-  title: "Fair Food Data Marketplace",
+  title: "trace.market Marketplace",
   description: "",
 };
 

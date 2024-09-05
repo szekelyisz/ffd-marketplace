@@ -43,7 +43,7 @@ export function Navbar() {
             bgClip="text"
             fontWeight="extrabold"
           >
-            Fair Food Data Marketplace
+            trace.market Marketplace
           </Heading>
         </Box>
         <Box display={{ lg: "block", base: "none" }}>
