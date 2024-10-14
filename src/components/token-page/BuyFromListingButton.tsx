@@ -1,6 +1,7 @@
 import { client } from "@/consts/client";
 import { useMarketplaceContext } from "@/hooks/useMarketplaceContext";
-import { Button, useToast } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Button, Link, useToast } from "@chakra-ui/react";
 import { ReactNode } from "react";
 import {
   type Hex,
@@ -87,8 +88,14 @@ export default function BuyFromListingButton(props: Props) {
             chain: nftContract.chain,
           });
           toast({
-            title:
-              "Purchase completed! The asset(s) should arrive in your account shortly",
+            title: (
+              <>
+                Purchase completed!
+                <Link href={process.env.NEXT_PUBLIC_TM_LIST_URL}>
+                  Check your wallet <ExternalLinkIcon mx="2px" boxSize={4} />
+                </Link>
+              </>
+            ),
             status: "success",
             duration: 4000,
             isClosable: true,
