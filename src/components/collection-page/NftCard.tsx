@@ -11,7 +11,7 @@ import {
   Skeleton,
   Text,
 } from "@chakra-ui/react";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import {
   MdAddShoppingCart,
   MdAlarmOff,
@@ -19,27 +19,81 @@ import {
   MdScale,
   MdSell,
 } from "react-icons/md";
-import useSWR from "swr";
 import { DirectListing } from "thirdweb/extensions/marketplace";
 import { useActiveAccount } from "thirdweb/react";
 import BuyFromListingButton from "../token-page/BuyFromListingButton";
 import { IconType } from "react-icons";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { gql, useQuery } from "urql";
+import { Bee } from "@ethersphere/bee-js";
+import { Pokedex } from "@fairfooddata/types";
+
+type MetadataUpdated = {
+  // id: string;
+  tokenId: string;
+  // owner: string;
+  swarmHash: string;
+  blockNumber: string;
+  // blockTimestamp: string;
+  // transactionHash: string;
+};
 
 export function NftCard({ item }: { item: DirectListing }): ReactNode {
-  const fetcher = (url: string, ...args: any[]) =>
-    fetch(url, ...args).then((res) => res.json());
+  const [metadata, setMetadata] = useState<NftMetadata | undefined>(undefined);
 
-  const { data: nftMetadata } = useSWR<NftMetadata>(
-    `${process.env.NEXT_PUBLIC_MINTER_URL}/metadata/${item.tokenId}`,
-    fetcher
-  );
+  const [eventsRequest, reexecuteQuery] = useQuery<{
+    metadataUpdateds: MetadataUpdated[];
+  }>({
+    query: gql`
+      {
+        metadataUpdateds(
+          where: {
+            tokenId: "${item.tokenId.toString()}"
+          }
+        ) {
+          tokenId
+          swarmHash
+          blockNumber
+        }
+      }
+    `,
+    requestPolicy: "cache-and-network",
+  });
+
+  useEffect(() => {
+    if (eventsRequest.data) {
+      eventsRequest.data.metadataUpdateds.sort(
+        (a, b) =>
+          Number.parseInt(b.blockNumber) - Number.parseInt(a.blockNumber)
+      );
+
+      const swarmHash = eventsRequest.data.metadataUpdateds[0].swarmHash;
+
+      new Bee(process.env.NEXT_PUBLIC_SWARM_URL!)
+        .downloadFile(
+          BigInt(swarmHash).toString(16).padStart(64, "0"),
+          undefined,
+          { timeout: false }
+        )
+        .then((response) => {
+          try {
+            setMetadata({
+              swarmReference: swarmHash,
+              content: response.data.json() as unknown as Pokedex,
+            });
+          } catch {
+            console.warn("Invalid metadata syntax");
+            return;
+          }
+        });
+    }
+  }, [eventsRequest.data]);
 
   const account = useActiveAccount();
 
   return (
     <Card key={item.id} rounded="12px" w={300} position="relative">
-      <Skeleton isLoaded={nftMetadata !== undefined}>
+      <Skeleton isLoaded={metadata !== undefined}>
         <Flex direction="column">
           {/* <MediaRenderer client={client} src={item.asset.metadata.image} /> */}
           <CardHeader pb={2}>
@@ -48,7 +102,7 @@ export function NftCard({ item }: { item: DirectListing }): ReactNode {
                 <Link
                   href={`${process.env.NEXT_PUBLIC_PACKAGING_URL}/?tokenId=${item.tokenId}`}
                 >
-                  {nftMetadata?.content.instance.type ?? "Unknown item"}{" "}
+                  {metadata?.content.instance.type ?? "Unknown item"}{" "}
                   <ExternalLinkIcon mx="2px" boxSize={4} />
                 </Link>
               </Heading>
@@ -63,21 +117,21 @@ export function NftCard({ item }: { item: DirectListing }): ReactNode {
           </CardHeader>
           <CardBody pt={0}>
             <NftData icon={MdScale}>
-              <Text>{nftMetadata?.content.instance.quantity}</Text>
+              <Text>{metadata?.content.instance.quantity}</Text>
             </NftData>
             <NftData icon={MdAlarmOff}>
               <Text>
                 {new Date(
-                  (nftMetadata?.content.instance.expiryDate ?? 0) * 1000
+                  (metadata?.content.instance.expiryDate ?? 0) * 1000
                 ).toDateString()}
               </Text>
             </NftData>
             <NftData icon={MdFactory}>
               <Link
                 isExternal
-                href={`${process.env.NEXT_PUBLIC_BRANDPAGE_URL}/?ownerId=${nftMetadata?.content.instance.ownerId}`}
+                href={`${process.env.NEXT_PUBLIC_BRANDPAGE_URL}/?ownerId=${metadata?.content.instance.ownerId}`}
               >
-                {nftMetadata?.content.instance.ownerId}{" "}
+                {metadata?.content.instance.ownerId}{" "}
                 <ExternalLinkIcon mx="2px" boxSize={4} verticalAlign={"-15%"} />
               </Link>
             </NftData>

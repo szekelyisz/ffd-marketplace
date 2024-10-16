@@ -3,6 +3,7 @@ import { Center, SimpleGrid, useBreakpointValue } from "@chakra-ui/react";
 import { NftCard } from "./NftCard";
 import { useActiveAccount } from "thirdweb/react";
 import { useValidDomain } from "@/hooks/useValidDomain";
+import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 
 export function ListingGrid() {
   const activeAccount = useActiveAccount();
@@ -19,14 +20,21 @@ export function ListingGrid() {
     xl: Math.min(len, 5),
   });
 
+  const gqlClient = new Client({
+    url: process.env.NEXT_PUBLIC_GQL_URL!,
+    exchanges: [cacheExchange, fetchExchange],
+  });
+
   return validDomain === false ? (
     <Center>Please don't use disposable email domains with our service.</Center>
   ) : listingsInSelectedCollection.length > 0 ? (
-    <SimpleGrid columns={columns} spacing={4} p={4} mx="auto" mt="20px">
-      {listingsInSelectedCollection.map((item) => (
-        <NftCard item={item} key={item.id} />
-      ))}
-    </SimpleGrid>
+    <Provider value={gqlClient}>
+      <SimpleGrid columns={columns} spacing={4} p={4} mx="auto" mt="20px">
+        {listingsInSelectedCollection.map((item) => (
+          <NftCard item={item} key={item.id} />
+        ))}
+      </SimpleGrid>
+    </Provider>
   ) : (
     <Center>No NFTs listed for sale</Center>
   );
